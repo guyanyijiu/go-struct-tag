@@ -60,6 +60,7 @@ function generateBsonCompletion(fieldName: string, fieldType: string): vscode.Co
 	}
 	items.push(
 		new vscode.CompletionItem(`bson:"${fieldName}"`, vscode.CompletionItemKind.Text),
+		new vscode.CompletionItem(`bson:"${fieldName},omitempty"`, vscode.CompletionItemKind.Text),
 		new vscode.CompletionItem('bson:"-"', vscode.CompletionItemKind.Text)
 	);
 	return items;
