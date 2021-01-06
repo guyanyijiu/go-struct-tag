@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import * as util from './util';
 
-const supportedTypes = ['json', 'bson', 'xorm', 'gorm'];
-const supportedTypeMaxLen = 4;
+const supportedTypes = ['json', 'bson', 'xorm', 'gorm', 'form'];
+const supportedTypeMaxLen = 5;
 const structFieldRegex = /^\s*([a-zA-Z_][a-zA-Z_\d]*)\s+(.+)`(.*)/;
 
 interface MatchTypeResult {
@@ -50,6 +50,14 @@ function generateJsonCompletion(fieldName: string, fieldType: string): vscode.Co
 		new vscode.CompletionItem(`json:"${fieldName}"`, vscode.CompletionItemKind.Text),
 		new vscode.CompletionItem(`json:"${fieldName},omitempty"`, vscode.CompletionItemKind.Text),
 		new vscode.CompletionItem(`json:"-"`, vscode.CompletionItemKind.Text),
+	];
+}
+
+function generateFormCompletion(fieldName: string, fieldType: string): vscode.CompletionItem[] {
+	return [
+		new vscode.CompletionItem(`form:"${fieldName}"`, vscode.CompletionItemKind.Text),
+		new vscode.CompletionItem(`form:"${fieldName},omitempty"`, vscode.CompletionItemKind.Text),
+		new vscode.CompletionItem(`form:"-"`, vscode.CompletionItemKind.Text),
 	];
 }
 
@@ -229,6 +237,9 @@ export function activate(context: vscode.ExtensionContext) {
 						case 'gorm':
 							items.push(...generateGormCompletion(fieldNameFormat, fieldType));
 							break;
+						case 'form':
+							items.push(...generateFormCompletion(fieldNameFormat, fieldType));
+							break;
 					}
 				}
 
@@ -239,7 +250,7 @@ export function activate(context: vscode.ExtensionContext) {
 				return items;
 			}
 		},
-		'j', 's', 'o', 'n', 'b', 'x', 'r', 'm', 'g'
+		'j', 's', 'o', 'n', 'b', 'x', 'r', 'm', 'g','f'
 	);
 
 	context.subscriptions.push(structTagCompletion);
