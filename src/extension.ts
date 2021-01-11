@@ -250,7 +250,7 @@ export function activate(context: vscode.ExtensionContext) {
 				return items;
 			}
 		},
-		'j', 's', 'o', 'n', 'b', 'x', 'r', 'm', 'g','f'
+		'j', 's', 'o', 'n', 'b', 'x', 'r', 'm', 'g', 'f'
 	);
 
 	context.subscriptions.push(structTagCompletion);
