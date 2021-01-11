@@ -243,6 +243,12 @@ export function activate(context: vscode.ExtensionContext) {
 					}
 				}
 
+				if (items.length === 0) {
+					return items;
+				}
+
+				items[0].preselect = true;
+
 				for (let i = 0; i < items.length; i++) {
 					items[i].sortText = i.toString();
 				}
