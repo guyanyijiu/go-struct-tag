@@ -2,6 +2,13 @@
 
 A Visual Studio Code extension for auto complete the go struct tag when typing.
 
+---
+*If it doesn't work, please add the following configuration in settings.json.*
+```
+    "editor.quickSuggestions": {
+        "strings": true
+    }
+```
 
 ## Screenshots
 
