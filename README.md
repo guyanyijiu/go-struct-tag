@@ -37,6 +37,16 @@ Below are the default settings:
 
 ## Features
 
+Supported tags:
+- `json`
+- `bson`
+- `xorm`
+- `gorm`
+- `form`
+- `yaml`
+- `binding`
+
+
 ![json](https://s3.ax1x.com/2021/01/11/s8Oc6K.png)
 
 

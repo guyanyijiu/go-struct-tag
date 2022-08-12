@@ -8,3 +8,6 @@
 - Supported cases: snake, camel, pascal, constant, none
 - Optimize the auto-completion function, which can be triggered in the tag value
 - Fix bugs
+
+## [0.1.1] - 2022-08-12
+- Add tag support: yaml, binding

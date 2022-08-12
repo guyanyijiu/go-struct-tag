@@ -5,8 +5,10 @@ import { generateBsonCompletion } from './tags/bson';
 import { generateXormCompletion } from './tags/xorm';
 import { generateGormCompletion } from './tags/gorm';
 import { generateFormCompletion } from './tags/form';
+import { generateYamlCompletion } from './tags/yaml';
+import { generateBindingCompletion } from './tags/binding';
 
-const supportedTags = ['json', 'bson', 'xorm', 'gorm', 'form'];
+const supportedTags = ['json', 'bson', 'xorm', 'gorm', 'form', 'yaml', 'binding'];
 
 const structFieldsRegex = /^\s*([a-zA-Z_][a-zA-Z_\d]*)\s+(.+)`(.*)/;
 const whitespaceRegex = /\s/;
@@ -38,6 +40,12 @@ export function generateCompletion(lineText: string, position: vscode.Position):
                 break;
             case 'form':
                 items.push(...generateFormCompletion(names, ls));
+                break;
+            case 'yaml':
+                items.push(...generateYamlCompletion(names, ls));
+                break;
+            case 'binding':
+                items.push(...generateBindingCompletion(names, ls));
                 break;
         }
     }
