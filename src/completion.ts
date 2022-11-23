@@ -7,8 +7,9 @@ import { generateGormCompletion } from './tags/gorm';
 import { generateFormCompletion } from './tags/form';
 import { generateYamlCompletion } from './tags/yaml';
 import { generateBindingCompletion } from './tags/binding';
+import { generateEnvCompletion } from "./tags/env";
 
-const supportedTags = ['json', 'bson', 'xorm', 'gorm', 'form', 'yaml', 'binding'];
+const supportedTags = ['json', 'bson', 'xorm', 'gorm', 'form', 'yaml', 'binding', 'env'];
 
 const structFieldsRegex = /^\s*([a-zA-Z_][a-zA-Z_\d]*)\s+(.+)`(.*)/;
 const whitespaceRegex = /\s/;
@@ -47,6 +48,9 @@ export function generateCompletion(lineText: string, position: vscode.Position):
             case 'binding':
                 items.push(...generateBindingCompletion(names, ls));
                 break;
+            case 'env':
+                items.push(...generateEnvCompletion(names, ls));
+                break;
         }
     }
 
@@ -64,13 +68,13 @@ export function generateCompletion(lineText: string, position: vscode.Position):
 }
 
 export type LineStruct = {
-    fieldName: string
-    fieldType: string
-    tags: string[]
-    leftContent: string
-    rightContent: string
-    leftPos: vscode.Position
-    rightPos: vscode.Position
+    fieldName: string;
+    fieldType: string;
+    tags: string[];
+    leftContent: string;
+    rightContent: string;
+    leftPos: vscode.Position;
+    rightPos: vscode.Position;
 };
 
 function parseLineStruct(lineText: string, position: vscode.Position): LineStruct | null {
