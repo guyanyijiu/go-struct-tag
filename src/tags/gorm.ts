@@ -2,10 +2,56 @@ import * as vscode from 'vscode';
 import { LineStruct } from '../completion';
 import { generateCompletionItem, CompletionItems } from './util';
 
+const delimiter: string = ";";
+const values: string[] = [
+    "default:",
+    "default:null",
+    "not null",
+    "index",
+    "uniqueIndex",
+    "comment:",
+    "autoIncrement",
+    "size:",
+    "primaryKey",
+    "unique",
+    "column:{{name}}",
+    "type:{{type}}",
+    "autoIncrementIncrement:",
+    "embedded",
+    "embeddedPrefix:",
+    "autoCreateTime",
+    "autoCreateTime:nano",
+    "autoCreateTime:milli",
+    "autoUpdateTime",
+    "autoUpdateTime:nano",
+    "autoUpdateTime:milli",
+    "check:",
+    "serializer:",
+    "precision:",
+    "scale:",
+];
+
+function makeValues(name: string, tps: string[]): string[] {
+    let result: string[] = [];
+    for (let v of values) {
+        if (v.includes("{{name}}")) {
+            result.push(v.replace("{{name}}", name));
+
+        } else if (v.includes("{{type}}")) {
+            for (let tp of tps) {
+                result.push(v.replace("{{type}}", tp));
+            }
+        } else {
+            result.push(v);
+        }
+    }
+    return result;
+}
+
 export function generateGormCompletion(names: string[], ls: LineStruct): vscode.CompletionItem[] {
     let items = new CompletionItems;
 
-    let gormType: string = '';
+    let gormTypes: string[] = [];
     let gormSize: string = '';
     switch (ls.fieldType) {
         case 'int':
@@ -16,58 +62,84 @@ export function generateGormCompletion(names: string[], ls: LineStruct): vscode.
         case 'uint8':
         case 'uint16':
         case 'uint32':
-            gormType = 'int';
+            gormTypes.push('int');
             break;
         case 'int64':
         case 'uint64':
-            gormType = 'bigint';
+            gormTypes.push('bigint');
             break;
         case 'float32':
-            gormType = 'float';
+            gormTypes.push('float');
             break;
         case 'float64':
-            gormType = 'double';
+            gormTypes.push('double');
             break;
         case 'bool':
-            gormType = 'tinyint';
+            gormTypes.push('tinyint');
             break;
         case 'string':
-            gormType = 'varchar';
+            gormTypes.push('varchar');
             gormSize = '255';
             break;
         case 'time.Time':
-            gormType = 'datetime';
+            gormTypes.push('datetime', 'timestamp');
             break;
         case 'complex64':
         case 'complex128':
-            gormType = 'varchar';
+            gormTypes.push('varchar');
             gormSize = '64';
             break;
         default:
-            gormType = 'text';
+            gormTypes.push('text', 'blob');
             break;
     }
 
     for (let name of names) {
-        if (name === 'id' && (gormType === 'bigint' || gormType === 'int')) {
-            items.push(generateCompletionItem(`gorm:"column:${name};type:${gormType};primaryKey;autoIncrement"`, ls));
-        }
+        for (let tp of gormTypes) {
+            if (name === 'id' && (tp === 'bigint' || tp === 'int')) {
+                items.push(generateCompletionItem(`gorm:"column:${name};type:${tp};primaryKey;autoIncrement"`, ls));
+            }
 
-        if (gormSize !== '') {
-            items.push(generateCompletionItem(`gorm:"column:${name};type:${gormType};size:${gormSize}"`, ls));
-        } else {
-            items.push(generateCompletionItem(`gorm:"column:${name};type:${gormType}"`, ls));
+            if (gormSize !== '') {
+                items.push(generateCompletionItem(`gorm:"column:${name};type:${tp};size:${gormSize}"`, ls));
+            }
+            items.push(generateCompletionItem(`gorm:"column:${name};type:${tp}"`, ls));
         }
         items.push(generateCompletionItem(`gorm:"column:${name}"`, ls));
-
-        if (gormType === 'datetime') {
-            items.push(generateCompletionItem(`gorm:"column:${name};type:timestamp"`, ls));
-        } else if (gormType === 'text') {
-            items.push(generateCompletionItem(`gorm:"column:${name};type:blob"`, ls));
-        }
     }
 
     items.push(generateCompletionItem('gorm:"-"', ls));
 
+    if (items.items.length === 0 && ls.exactTagType) {
+        items.pushAll(parseTagValue(ls.pos, ls.leftContent, delimiter, makeValues(names[0], gormTypes)));
+    }
+
     return items.items;
+}
+
+
+function parseTagValue(pos: vscode.Position, leftContent: string, delimiter: string, values: string[]): vscode.CompletionItem[] | null {
+    console.log("pos: ", pos);
+    let i = leftContent.lastIndexOf(delimiter);
+    console.log("1--i: ", i);
+    if (i < 0) {
+        i = leftContent.lastIndexOf('"');
+    }
+    console.log("2--i: ", i);
+    if (i <= 0) {
+        return null;
+    }
+    const prefix = leftContent.substring(i + 1);
+    let lpos = new vscode.Position(pos.line, pos.character - prefix.length);
+    console.log("prefix: ", prefix);
+    let items: vscode.CompletionItem[] = [];
+    for (let v of values) {
+        if (v !== prefix && v.startsWith(prefix)) {
+            let item = new vscode.CompletionItem(v, vscode.CompletionItemKind.Text);
+            item.range = new vscode.Range(lpos, pos);
+            items.push(item);
+        }
+    }
+
+    return items;
 }

@@ -26,6 +26,12 @@ export class CompletionItems {
         }
     }
 
+    pushAll(items: vscode.CompletionItem[] | null) {
+        if (items) {
+            this.items.push(...items);
+        }
+    }
+
     unshift(item: vscode.CompletionItem | null) {
         if (item) {
             this.items.unshift(item);
