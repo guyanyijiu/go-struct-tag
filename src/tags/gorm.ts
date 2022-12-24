@@ -3,7 +3,7 @@ import { LineStruct } from '../completion';
 import { generateCompletionItem, CompletionItems } from './util';
 
 const delimiter: string = ";";
-const values: string[] = [
+const keyFlags: string[] = [
     "default:",
     "default:null",
     "not null",
@@ -31,12 +31,11 @@ const values: string[] = [
     "scale:",
 ];
 
-function makeValues(name: string, tps: string[]): string[] {
+function makeKeyFlags(name: string, tps: string[]): string[] {
     let result: string[] = [];
-    for (let v of values) {
+    for (let v of keyFlags) {
         if (v.includes("{{name}}")) {
             result.push(v.replace("{{name}}", name));
-
         } else if (v.includes("{{type}}")) {
             for (let tp of tps) {
                 result.push(v.replace("{{type}}", tp));
@@ -111,27 +110,24 @@ export function generateGormCompletion(names: string[], ls: LineStruct): vscode.
     items.push(generateCompletionItem('gorm:"-"', ls));
 
     if (items.items.length === 0 && ls.exactTagType) {
-        items.pushAll(parseTagValue(ls.pos, ls.leftContent, delimiter, makeValues(names[0], gormTypes)));
+        items.pushAll(generateKeyFlagCompletionItems(ls.pos, ls.leftContent, delimiter, makeKeyFlags(names[0], gormTypes)));
     }
 
     return items.items;
 }
 
-
-function parseTagValue(pos: vscode.Position, leftContent: string, delimiter: string, values: string[]): vscode.CompletionItem[] | null {
-    console.log("pos: ", pos);
+function generateKeyFlagCompletionItems(pos: vscode.Position, leftContent: string, delimiter: string, values: string[]): vscode.CompletionItem[] | null {
     let i = leftContent.lastIndexOf(delimiter);
-    console.log("1--i: ", i);
     if (i < 0) {
         i = leftContent.lastIndexOf('"');
     }
-    console.log("2--i: ", i);
     if (i <= 0) {
         return null;
     }
+
     const prefix = leftContent.substring(i + 1);
+
     let lpos = new vscode.Position(pos.line, pos.character - prefix.length);
-    console.log("prefix: ", prefix);
     let items: vscode.CompletionItem[] = [];
     for (let v of values) {
         if (v !== prefix && v.startsWith(prefix)) {

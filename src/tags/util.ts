@@ -17,6 +17,28 @@ export function generateCompletionItem(label: string, ls: LineStruct): vscode.Co
     return item;
 }
 
+export function generateFlagCompletionItems(leftContent: string, delimiter: string, flags: string[]): vscode.CompletionItem[] | null {
+    let i = leftContent.lastIndexOf(delimiter);
+    if (i < 0) {
+        i = leftContent.lastIndexOf('"');
+    }
+    if (i <= 0) {
+        return null;
+    }
+
+    const prefix = leftContent.substring(i + 1);
+
+    let items: vscode.CompletionItem[] = [];
+    for (let flag of flags) {
+        if (flag !== prefix && flag.startsWith(prefix)) {
+            let item = new vscode.CompletionItem(flag, vscode.CompletionItemKind.Text);
+            items.push(item);
+        }
+    }
+
+    return items;
+}
+
 export class CompletionItems {
     items: vscode.CompletionItem[];
 

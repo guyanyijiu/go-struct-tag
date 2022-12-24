@@ -45,6 +45,9 @@ Supported tags:
 - `form`
 - `yaml`
 - `binding`
+- `env`
+- `validate`
+- `mapstructure`
 
 
 ![json](https://s3.ax1x.com/2021/01/11/s8Oc6K.png)

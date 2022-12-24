@@ -11,3 +11,7 @@
 
 ## [0.1.1] - 2022-08-12
 - Add tag support: yaml, binding
+
+## [0.2.0] - 2022-12-25
+- Add tag support: env, validate, mapstructure
+- Supported struct tag value autocomplete

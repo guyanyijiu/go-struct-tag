@@ -7,16 +7,17 @@ import { generateGormCompletion } from './tags/gorm';
 import { generateFormCompletion } from './tags/form';
 import { generateYamlCompletion } from './tags/yaml';
 import { generateBindingCompletion } from './tags/binding';
-import { generateEnvCompletion } from "./tags/env";
+import { generateEnvCompletion, generateEnvDefaultCompletion, generateEnvExpandCompletion, generateEnvPrefixCompletion } from './tags/env';
+import { generateValidateCompletion } from './tags/validate';
+import { generateMapstructureCompletion } from './tags/mapstructure';
 
-const supportedTags = ['json', 'bson', 'xorm', 'gorm', 'form', 'yaml', 'binding', 'env'];
+const supportedTags = ['json', 'bson', 'xorm', 'gorm', 'form', 'yaml', 'binding', 'env', 'envDefault', 'envExpand', 'envPrefix', 'validate', 'mapstructure'];
 
 const structFieldsRegex = /^\s*([a-zA-Z_][a-zA-Z_\d]*)\s+(.+)`(.+)`/;
 const whitespaceRegex = /\s/;
 
 export function generateCompletion(lineText: string, position: vscode.Position): vscode.CompletionItem[] {
     const ls = parseLineStruct(lineText, position);
-    console.log("line struct: ", ls);
     if (!ls) {
         return [];
     }
@@ -52,6 +53,21 @@ export function generateCompletion(lineText: string, position: vscode.Position):
             case 'env':
                 items.push(...generateEnvCompletion(names, ls));
                 break;
+            case 'envDefault':
+                items.push(...generateEnvDefaultCompletion(names, ls));
+                break;
+            case 'envExpand':
+                items.push(...generateEnvExpandCompletion(names, ls));
+                break;
+            case 'envPrefix':
+                items.push(...generateEnvPrefixCompletion(names, ls));
+                break;
+            case 'validate':
+                items.push(...generateValidateCompletion(names, ls));
+                break;
+            case 'mapstructure':
+                items.push(...generateMapstructureCompletion(names, ls));
+                break;
         }
     }
 
@@ -65,9 +81,6 @@ export function generateCompletion(lineText: string, position: vscode.Position):
     for (let i = 0; i < items.length; i++) {
         items[i].sortText = String.fromCharCode(i + 48);
     }
-
-    console.log(items);
-
 
     return items;
 }
@@ -191,86 +204,3 @@ function parseLineStruct(lineText: string, position: vscode.Position): LineStruc
         pos: position,
     };
 }
-
-// function parseLineStructBak(lineText: string, position: vscode.Position): LineStruct | null {
-//     const results = structFieldsRegex.exec(lineText.slice(0, position.character));
-//     if (!results) {
-//         return null;
-//     }
-
-//     let tagTypes: string[] = [];
-//     let exactTagType: boolean = false;
-//     let leftContent: string = "";
-//     let rightContent: string = "";
-
-//     let slices = results[3].trim().split(whitespaceRegex);
-//     let tagContent = slices[slices.length - 1].trim();
-//     const sIndex = tagContent.indexOf(":");
-//     if (sIndex > 0) {
-//         tagTypes.push(tagContent.substring(0, sIndex));
-//         exactTagType = true;
-//     } else {
-//         for (let stag of supportedTags) {
-//             if (stag.startsWith(tagContent)) {
-//                 tagTypes.push(stag);
-//             }
-//         }
-//     }
-
-//     const maxPos = lineText.length - 1;
-//     let leftPos = position.character;
-//     let rightPos = position.character - 1;
-//     let chr = '';
-//     let hasQuota = false;
-//     while (true) {
-//         leftPos -= 1;
-//         if (leftPos <= 0) {
-//             break;
-//         }
-//         chr = lineText[leftPos];
-//         if (chr === '`' || whitespaceRegex.test(chr)) {
-//             break;
-//         }
-//         if (chr === '"') {
-//             hasQuota = true;
-//         }
-//         leftContent = chr + leftContent;
-//     }
-
-//     let leftPosition = new vscode.Position(position.line, leftPos + 1);
-
-//     let rightStopChr = (s: string): boolean => whitespaceRegex.test(s);
-//     if (hasQuota) {
-//         rightStopChr = (s: string): boolean => s === '"';
-//     }
-//     while (true) {
-//         rightPos += 1;
-//         if (rightPos >= maxPos) {
-//             break;
-//         }
-//         chr = lineText[rightPos];
-//         if (chr === '`' || rightStopChr(chr)) {
-//             if (chr === '"') {
-//                 rightPos += 1;
-//                 rightContent += chr;
-//             }
-//             break;
-//         }
-
-//         rightContent += chr;
-//     }
-
-//     let rightPosition = new vscode.Position(position.line, rightPos);
-
-//     return {
-//         fieldName: results[1],
-//         fieldType: results[2].trim(),
-//         tagTypes: tagTypes,
-//         exactTagType: exactTagType,
-//         leftContent: leftContent,
-//         rightContent: rightContent,
-//         leftPos: leftPosition,
-//         rightPos: rightPosition,
-//         pos: position,
-//     };
-// }
