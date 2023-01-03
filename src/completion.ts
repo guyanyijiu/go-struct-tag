@@ -10,8 +10,9 @@ import { generateBindingCompletion } from './tags/binding';
 import { generateEnvCompletion, generateEnvDefaultCompletion, generateEnvExpandCompletion, generateEnvPrefixCompletion } from './tags/env';
 import { generateValidateCompletion } from './tags/validate';
 import { generateMapstructureCompletion } from './tags/mapstructure';
+import { generateRedisCompletion } from './tags/redis';
 
-const supportedTags = ['json', 'bson', 'xorm', 'gorm', 'form', 'yaml', 'binding', 'env', 'envDefault', 'envExpand', 'envPrefix', 'validate', 'mapstructure'];
+const supportedTags = ['json', 'bson', 'xorm', 'gorm', 'form', 'yaml', 'binding', 'env', 'envDefault', 'envExpand', 'envPrefix', 'validate', 'mapstructure', 'redis'];
 
 const structFieldsRegex = /^\s*([a-zA-Z_][a-zA-Z_\d]*)\s+(.+)`(.+)`/;
 const whitespaceRegex = /\s/;
@@ -67,6 +68,9 @@ export function generateCompletion(lineText: string, position: vscode.Position):
                 break;
             case 'mapstructure':
                 items.push(...generateMapstructureCompletion(names, ls));
+                break;
+            case 'redis':
+                items.push(...generateRedisCompletion(names, ls));
                 break;
         }
     }

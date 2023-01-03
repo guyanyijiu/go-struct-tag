@@ -1,5 +1,8 @@
 # Change Log
 
+## [0.2.1] - 2023-01-03
+- Add tag support: redis
+
 ## [0.2.0] - 2022-12-25
 - Add tag support: env, validate, mapstructure
 - Supported struct tag value autocomplete
