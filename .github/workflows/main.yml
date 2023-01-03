@@ -16,7 +16,7 @@ jobs:
       - name: Install vsce
         run: npm install -g vsce
       - name: Install Dependencies
-        run: yarn install
+        run: npm install
       - name: Build
         run: vsce package
       - name: Release
