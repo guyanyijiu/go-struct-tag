@@ -41,6 +41,11 @@
 							"camel"
 						],
 						"description": "Supported: snake, camel, pascal, constant, none"
+					},
+					"go-struct-tag.customTags": {
+						"type": "object",
+						"default": {},
+						"description": "Custom tags. Reference https://github.com/guyanyijiu/go-struct-tag#configuration"
 					}
 				}
 			}

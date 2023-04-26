@@ -1,4 +1,6 @@
 # Change Log
+## [0.3.0] - 2023-04-26
+- Support custom tags
 
 ## [0.2.1] - 2023-01-03
 - Add tag support: redis

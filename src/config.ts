@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { updateConfigCases } from './cases';
+import { updateCustomTags } from './completion';
 
 let configListener: vscode.Disposable;
 
@@ -19,4 +20,7 @@ function loadConfig() {
     if (caseStyles && Array.isArray(caseStyles)) {
         updateConfigCases(caseStyles as string[]);
     }
+
+    let tags = vscode.workspace.getConfiguration('go-struct-tag').get('customTags');
+    updateCustomTags(tags);
 }

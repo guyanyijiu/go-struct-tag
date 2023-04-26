@@ -23,6 +23,8 @@ Open Command Palette (⌘ + ⇧ + P) then Preferences: Open Settings (JSON)
 
 ## Configuration
 
+### `go-struct-tag.cases`
+
 Add entry into go-struct-tag.cases to set the field name format.
 
 Supported:
@@ -40,6 +42,32 @@ Below are the default settings:
     ]
 ```
 
+### `go-struct-tag.customTags`
+
+Use custom tags.
+
+example:
+```
+    "go-struct-tag.customTags": {
+        "mytag1": {
+            "cases": [
+                "snake"
+            ],
+            "options": [
+                "omitempty",
+                "string",
+                "-"
+            ],
+            "separator": ","
+        },
+        "mytag2":{}
+    }
+```
+
+- `mytag1`, `mytag2`: Custom tag name
+- `cases`: Field name formatting for this tag. If not set use the value of `go-struct-tag.cases`
+- `options`: A list of options following the field name. If not set no options will be used
+- `separator`: Separator between options. if not set, use `,`
 
 ## Features
 

@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { casedName } from './cases';
+import { casedName, isSupportedCase } from './cases';
 import { generateJsonCompletion } from './tags/json';
 import { generateBsonCompletion } from './tags/bson';
 import { generateXormCompletion } from './tags/xorm';
@@ -11,11 +11,83 @@ import { generateEnvCompletion, generateEnvDefaultCompletion, generateEnvExpandC
 import { generateValidateCompletion } from './tags/validate';
 import { generateMapstructureCompletion } from './tags/mapstructure';
 import { generateRedisCompletion } from './tags/redis';
+import { generateCustomTagCompletion } from './tags/custom';
 
-const supportedTags = ['json', 'bson', 'xorm', 'gorm', 'form', 'yaml', 'binding', 'env', 'envDefault', 'envExpand', 'envPrefix', 'validate', 'mapstructure', 'redis'];
+const defaultSupportedTags = ['json', 'bson', 'xorm', 'gorm', 'form', 'yaml', 'binding', 'env', 'envDefault', 'envExpand', 'envPrefix', 'validate', 'mapstructure', 'redis'];
+var supportedTags: string[] = Object.assign([], defaultSupportedTags);
 
 const structFieldsRegex = /^\s*([a-zA-Z_][a-zA-Z_\d]*)\s+(.+)`(.+)`/;
 const whitespaceRegex = /\s/;
+
+
+let customTags: Map<string, TagConfig> = new Map();
+
+type TagConfig = {
+    cases?: string[]
+    options?: string[]
+    separator?: string
+};
+
+export function updateCustomTags(tags: any) {
+    if (!tags || typeof (tags) !== 'object') {
+        return;
+    }
+
+    let invalidTags: string[] = [];
+
+    customTags = new Map();
+
+    supportedTags = Object.assign([], defaultSupportedTags);
+
+    Object.keys(tags).forEach(k => {
+        let tag = tags[k];
+
+        if (tag.cases && !Array.isArray(tag.cases)) {
+            invalidTags.push(k);
+            return;
+        }
+
+        if (tag.options && !Array.isArray(tag.options)) {
+            invalidTags.push(k);
+            return;
+        }
+
+        if (tag.separator && typeof (tag.separator) !== 'string') {
+            invalidTags.push(k);
+            return;
+        }
+
+        let tc = tag as TagConfig;
+
+        if (tc.cases && tc.cases.length > 0) {
+            for (let c of tc.cases) {
+                if (!isSupportedCase(c)) {
+                    invalidTags.push(k);
+                    return;
+                }
+            }
+        }
+
+        customTags.set(k, tc);
+    });
+
+    if (invalidTags.length > 0) {
+        let msg = `Invalid [${invalidTags.map(c => `"${c}"`).join(', ')}] in "go-struct-tag.customTags". `;
+        msg += " Reference [https://github.com/guyanyijiu/go-struct-tag#configuration](https://github.com/guyanyijiu/go-struct-tag#configuration)";
+        vscode.window.showErrorMessage(msg, 'open settings.json').then(option => {
+            if (option === 'open settings.json') {
+                vscode.commands.executeCommand('workbench.action.openSettingsJson');
+            }
+        });
+        return;
+    }
+
+    for (let k of customTags.keys()) {
+        if (!supportedTags.includes(k)) {
+            supportedTags.push(k);
+        }
+    }
+}
 
 export function generateCompletion(lineText: string, position: vscode.Position): vscode.CompletionItem[] {
     const ls = parseLineStruct(lineText, position);
@@ -29,6 +101,12 @@ export function generateCompletion(lineText: string, position: vscode.Position):
     let items: vscode.CompletionItem[] = [];
 
     for (let tag of ls.tagTypes) {
+        let tc = customTags.get(tag);
+        if (tc) {
+            items.push(...generateCustomTagCompletion(tag, casedName(ls.fieldName, tc.cases), ls, tc.separator, tc.options));
+            continue;
+        }
+
         switch (tag) {
             case 'json':
                 items.push(...generateJsonCompletion(names, ls));

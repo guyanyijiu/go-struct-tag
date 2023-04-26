@@ -27,19 +27,24 @@ export function updateConfigCases(cases: string[]) {
     }
 
     if (invalidCases.length > 0) {
-        let msg = `go-struct-tag: Invalid [${invalidCases.map(c => `"${c}"`).join(',')}] in "go-struct-tag.cases" configuration`;
-        vscode.window.showInformationMessage(msg, 'Open Config').then(option => {
-            if (option === 'Open Config') {
+        let msg = `Invalid [${invalidCases.map(c => `"${c}"`).join(', ')}] in "go-struct-tag.cases". `;
+        msg += " Reference [https://github.com/guyanyijiu/go-struct-tag#configuration](https://github.com/guyanyijiu/go-struct-tag#configuration)";
+        vscode.window.showErrorMessage(msg, 'open settings.json').then(option => {
+            if (option === 'open settings.json') {
                 vscode.commands.executeCommand('workbench.action.openSettingsJson');
             }
         });
     }
 }
 
-export function casedName(name: string): string[] {
+export function casedName(name: string, cases?: string[]): string[] {
     let result: string[] = [];
 
-    for (let cs of configCases) {
+    if (!cases || cases.length === 0) {
+        cases = configCases;
+    }
+
+    for (let cs of cases) {
         switch (cs) {
             case 'snake':
                 result.push(snakeCase(name));
@@ -60,4 +65,8 @@ export function casedName(name: string): string[] {
     }
 
     return result;
+}
+
+export function isSupportedCase(c: string): boolean {
+    return supportedCases.includes(c);
 }
