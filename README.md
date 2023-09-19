@@ -18,6 +18,7 @@ Open Command Palette (⌘ + ⇧ + P) then Preferences: Open Settings (JSON)
     "editor.quickSuggestions": {
         "strings": true
     }
+    "editor.suggest.showWords": true,
 ```
 
 
