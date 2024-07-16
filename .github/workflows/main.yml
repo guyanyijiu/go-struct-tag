@@ -10,17 +10,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup Node.js environment
-        uses: actions/setup-node@v3.5.1
-      - name: Install vsce
-        run: npm install -g vsce
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
+      - name: Install vsce
+        run: npm install -g @vscode/vsce
       - name: Build
         run: vsce package
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: "*.vsix"
