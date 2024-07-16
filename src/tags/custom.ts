@@ -31,7 +31,11 @@ export function generateCustomTagCompletion(tag: string, names: string[], ls: Li
                 if (op === omitOption) {
                     items.push(generateCompletionItem(`${tag}:"${op}"`, ls));
                 } else {
-                    items.push(generateCompletionItem(`${tag}:"${name}${separator}${op}"`, ls));
+                    if (name === "") {
+                        items.push(generateCompletionItem(`${tag}:"${op}"`, ls));
+                    } else {
+                        items.push(generateCompletionItem(`${tag}:"${name}${separator}${op}"`, ls));
+                    }
                 }
             }
         }

@@ -103,7 +103,13 @@ export function generateCompletion(lineText: string, position: vscode.Position):
     for (let tag of ls.tagTypes) {
         let tc = customTags.get(tag);
         if (tc) {
-            items.push(...generateCustomTagCompletion(tag, casedName(ls.fieldName, tc.cases), ls, tc.separator, tc.options));
+            let names: string[];
+            if (tc.cases !== undefined && tc.cases.length === 0) {
+                names = [""];
+            } else {
+                names = casedName(ls.fieldName, tc.cases);
+            }
+            items.push(...generateCustomTagCompletion(tag, names, ls, tc.separator, tc.options));
             continue;
         }
 

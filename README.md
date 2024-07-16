@@ -6,12 +6,12 @@
 
 # go-struct-tag
 
-A Visual Studio Code extension for autocomplete the go struct tag when typing.
+A Visual Studio Code extension for autocompleting Go struct tags while typing.
 
 
 ## Note
 
-If it doesn't work, please add the following configuration in settings.json.
+If the extension doesn't work, please add the following configuration in `settings.json`:
 
 Open Command Palette (⌘ + ⇧ + P) then Preferences: Open Settings (JSON)
 ```
@@ -26,9 +26,9 @@ Open Command Palette (⌘ + ⇧ + P) then Preferences: Open Settings (JSON)
 
 ### `go-struct-tag.cases`
 
-Add entry into go-struct-tag.cases to set the field name format.
+Add entries into `go-struct-tag.cases` to set the field name format.
 
-Supported:
+Supported formats:
 - `snake`
 - `camel`
 - `pascal`
@@ -47,10 +47,10 @@ Below are the default settings:
 
 Use custom tags.
 
-example:
+Example:
 ```
     "go-struct-tag.customTags": {
-        "mytag1": {
+        "customTag1": {
             "cases": [
                 "snake"
             ],
@@ -61,18 +61,21 @@ example:
             ],
             "separator": ","
         },
-        "mytag2":{}
+        "customTag2": {
+            "cases": []
+        },
+        "customTag3": {}
     }
 ```
 
-- `mytag1`, `mytag2`: Custom tag name
-- `cases`: Field name formatting for this tag. If not set use the value of `go-struct-tag.cases`
-- `options`: A list of options following the field name. If not set no options will be used
-- `separator`: Separator between options. if not set, use `,`
+- `customTag1`, `customTag2`, `customTag3`: Custom tag names
+- `cases`: Field name formatting for this tag. If not set, it uses the value of `go-struct-tag.cases`. If set to `[]`, the field name will not be used.
+- `options`: A list of options following the field name. If not set, no options will be used.
+- `separator`: Separator between options. If not set, it defaults to `,`.
 
 ## Features
 
-Supported tags:
+Default supported tags:
 - `json`: [https://pkg.go.dev/encoding/json](https://pkg.go.dev/encoding/json)
 - `bson`: [https://pkg.go.dev/go.mongodb.org/mongo-driver/bson](https://pkg.go.dev/go.mongodb.org/mongo-driver/bson)
 - `xorm`: [https://xorm.io/docs/](https://xorm.io/docs/)
