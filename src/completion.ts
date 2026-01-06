@@ -12,8 +12,9 @@ import { generateValidateCompletion } from './tags/validate';
 import { generateMapstructureCompletion } from './tags/mapstructure';
 import { generateRedisCompletion } from './tags/redis';
 import { generateCustomTagCompletion } from './tags/custom';
+import { generateGoquCompletion } from './tags/goqu';
 
-const defaultSupportedTags = ['json', 'bson', 'xorm', 'gorm', 'form', 'yaml', 'binding', 'env', 'envDefault', 'envExpand', 'envPrefix', 'validate', 'mapstructure', 'redis'];
+const defaultSupportedTags = ['json', 'bson', 'xorm', 'gorm', 'form', 'yaml', 'binding', 'env', 'envDefault', 'envExpand', 'envPrefix', 'validate', 'mapstructure', 'redis', 'goqu'];
 var supportedTags: string[] = Object.assign([], defaultSupportedTags);
 
 const structFieldsRegex = /^\s*([a-zA-Z_][a-zA-Z_\d]*)\s+(.+)`(.+)`/;
@@ -155,6 +156,12 @@ export function generateCompletion(lineText: string, position: vscode.Position):
                 break;
             case 'redis':
                 items.push(...generateRedisCompletion(names, ls));
+                break;
+            case 'goqu':
+                if (lineText.includes('db:"-"')) {
+                    break;
+                }
+                items.push(...generateGoquCompletion(names, ls));
                 break;
         }
     }
