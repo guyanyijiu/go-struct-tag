@@ -6,49 +6,90 @@
 
 # go-struct-tag
 
-A Visual Studio Code extension for autocompleting Go struct tags while typing.
+A Visual Studio Code extension that provides auto-completion for Go struct tags while typing.
+
+It helps you quickly generate Go struct tags with consistent field naming and optional tag options.
 
 
-## Note
+## Features
 
-If the extension doesn't work, please add the following configuration in `settings.json`:
+### Supported Struct Tags
 
-Open Command Palette (⌘ + ⇧ + P) then Preferences: Open Settings (JSON)
-```
+The extension provides built-in support for the following tags:
+
+- `json` — https://pkg.go.dev/encoding/json
+- `bson` — https://pkg.go.dev/go.mongodb.org/mongo-driver/bson
+- `xorm` — https://xorm.io/docs/
+- `gorm` — https://gorm.io/docs/index.html
+- `form` — https://github.com/gin-gonic/gin
+- `yaml` — https://pkg.go.dev/gopkg.in/yaml.v3
+- `binding` — https://github.com/gin-gonic/gin
+- `env` — https://github.com/caarlos0/env
+- `validate` — https://github.com/gin-gonic/gin
+- `mapstructure` — https://github.com/mitchellh/mapstructure
+- `redis` — https://github.com/gomodule/redigo
+- `goqu` — https://github.com/doug-martin/goqu
+
+### Screenshots
+
+#### JSON
+![json](https://s3.ax1x.com/2021/01/11/s8Oc6K.png)
+
+#### BSON
+![bson](https://s3.ax1x.com/2021/01/11/s8O71P.png)
+
+#### XORM
+![xorm](https://s3.ax1x.com/2021/01/11/s8OX7Q.png)
+
+#### GORM
+![gorm](https://s3.ax1x.com/2021/01/11/s8Xppq.png)
+
+
+## Requirements
+
+To ensure auto-completion works correctly inside string literals, please enable quick suggestions for strings.
+
+Open the Command Palette (`⌘ + ⇧ + P` / `Ctrl + Shift + P`), then select  
+**Preferences: Open Settings (JSON)** and add:
+
+```json
     "editor.quickSuggestions": {
         "strings": true
-    }
-    "editor.suggest.showWords": true,
+    },
+    "editor.suggest.showWords": true
 ```
-
 
 ## Configuration
 
 ### `go-struct-tag.cases`
 
-Add entries into `go-struct-tag.cases` to set the field name format.
+Defines how struct field names are converted when generating tag values.
 
-Supported formats:
+#### Supported Case Formats
+
 - `snake`
 - `camel`
 - `pascal`
 - `constant`
 - `none`
 
-Below are the default settings:
-```
+#### Default Configuration
+
+```json
     "go-struct-tag.cases": [
         "snake",
         "camel"
     ]
 ```
 
+
 ### `go-struct-tag.customTags`
 
-Use custom tags.
+Allows defining custom struct tags with their own formatting rules and options.
 
-Example:
-```
+#### Example:
+
+```json
     "go-struct-tag.customTags": {
         "customTag1": {
             "cases": [
@@ -67,38 +108,23 @@ Example:
         "customTag3": {}
     }
 ```
+#### Field Descriptions
 
-- `customTag1`, `customTag2`, `customTag3`: Custom tag names
-- `cases`: Field name formatting for this tag. If not set, it uses the value of `go-struct-tag.cases`. If set to `[]`, the field name will not be used.
-- `options`: A list of options following the field name. If not set, no options will be used.
-- `separator`: Separator between options. If not set, it defaults to `,`.
+- **Custom tag names**  
+  `customTag1`, `customTag2`, `customTag3`
 
-## Features
+- **`cases`**  
+  Field name formatting for this tag:
+  - Not set: uses `go-struct-tag.cases`
+  - Empty array (`[]`): field name is omitted
 
-Default supported tags:
-- `json`: [https://pkg.go.dev/encoding/json](https://pkg.go.dev/encoding/json)
-- `bson`: [https://pkg.go.dev/go.mongodb.org/mongo-driver/bson](https://pkg.go.dev/go.mongodb.org/mongo-driver/bson)
-- `xorm`: [https://xorm.io/docs/](https://xorm.io/docs/)
-- `gorm`: [https://gorm.io/docs/index.html](https://gorm.io/docs/index.html)
-- `form`: [https://github.com/gin-gonic/gin](https://github.com/gin-gonic/gin)
-- `yaml`: [https://pkg.go.dev/gopkg.in/yaml.v3](https://pkg.go.dev/gopkg.in/yaml.v3)
-- `binding`: [https://github.com/gin-gonic/gin](https://github.com/gin-gonic/gin)
-- `env`: [https://github.com/caarlos0/env](https://github.com/caarlos0/env)
-- `validate`: [https://github.com/gin-gonic/gin](https://github.com/gin-gonic/gin)
-- `mapstructure`: [https://github.com/mitchellh/mapstructure](https://github.com/mitchellh/mapstructure)
-- `redis`: [https://github.com/gomodule/redigo](https://github.com/gomodule/redigo)
+- **`options`**  
+  A list of options appended after the field name.
 
+- **`separator`**  
+  Separator used between options.  
+  Defaults to `,` if not specified.
 
-![json](https://s3.ax1x.com/2021/01/11/s8Oc6K.png)
+## License
 
-
-![bson](https://s3.ax1x.com/2021/01/11/s8O71P.png)
-
-
-![xorm](https://s3.ax1x.com/2021/01/11/s8OX7Q.png)
-
-
-![gorm](https://s3.ax1x.com/2021/01/11/s8Xppq.png)
-
-
-![form](https://s3.ax1x.com/2021/01/11/s8XPXT.png)
+MIT

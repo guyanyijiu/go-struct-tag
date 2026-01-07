@@ -1,17 +1,20 @@
 {
 	"name": "go-struct-tag",
-	"displayName": "Go struct tag",
-	"description": "Autocomplete Go struct tags",
+	"displayName": "Go Struct Tag",
+	"description": "Autocomplete and generate Go struct tags with consistent field formatting.",
 	"keywords": [
 		"go",
 		"golang",
 		"struct",
 		"tag",
 		"complete",
+		"autocomplete",
 		"json",
-		"autocomplete"
+		"yaml",
+		"xorm",
+		"gorm"
 	],
-	"version": "0.3.1",
+	"version": "1.0.0",
 	"publisher": "liuchao",
 	"repository": {
 		"type": "git",
@@ -32,7 +35,7 @@
 	"contributes": {
 		"configuration": [
 			{
-				"title": "Go struct tag",
+				"title": "Go Struct Tag",
 				"properties": {
 					"go-struct-tag.cases": {
 						"type": "array",
